@@ -22,35 +22,36 @@ import java.sql.SQLException;
  * @created by zhijianhao on 2023/3/26-16:33
  */
 public class ApiTest {
-    private Logger logger = LoggerFactory.getLogger(ApiTest.class);
+    private final Logger logger = LoggerFactory.getLogger(ApiTest.class);
 
     @Test
     public void test_SqlSessionFactory() throws IOException {
 
-        /**
-         * Resources.getResourcesAsReader("mybatis-config-datasource.xml")
-         * 指定 mybatis-config-datasource.xml 文件
-         * 利用classLoader.getResourceAsStream()方法 获取指定文件的输入流
-         * 使用InputStreamReader进行解析成Reader对象
-         * (Reader 是一个抽象类，是所有字符输入流的父类。Reader对象用于从字符流中读取数据，并以字符串的形式进行处理)
-         *
+        /*
+          Resources.getResourcesAsReader("mybatis-config-datasource.xml")
+          指定 mybatis-config-datasource.xml 文件
+          利用classLoader.getResourceAsStream()方法 获取指定文件的输入流
+          使用InputStreamReader进行解析成Reader对象
+          (Reader 是一个抽象类，是所有字符输入流的父类。Reader对象用于从字符流中读取数据，并以字符串的形式进行处理)
+
          */
         // 1. 从SqlSessionFactory中获取SqlSession
-        /**
-         * SqlSessionFactory 在Mybatis中用于创建 SqlSession对象工厂类
-         * SqlSessionFactory 是一个线程安全的对象，用于创建 SqlSession 实例
-         * SqlSession 是 Mybatis 执行持久化操作主要入口点。
-         * SqlSessionFactory 主要作用：
-         * 1.提供线程安全的SqlSession实例：SqlSessionFactory是线程安全的
-         * 因为SqlSessionFactory在创建过程中是一个开销比较大的过程，解析xml、加载configuration配置、构建映射器 mapper 一旦初始化之后就无法改变
-         * SqlSessionFactory本身是没有加锁的动作来保证线程安全的，而是通过依赖dataSource因为datasource他的状态是只读状态
+        /*
+          SqlSessionFactory 在Mybatis中用于创建 SqlSession对象工厂类
+          SqlSessionFactory 是一个线程安全的对象，用于创建 SqlSession 实例
+          SqlSession 是 Mybatis 执行持久化操作主要入口点。
+          SqlSessionFactory 主要作用：
+          1.提供线程安全的SqlSession实例：SqlSessionFactory是线程安全的
+          因为SqlSessionFactory在创建过程中是一个开销比较大的过程，解析xml、加载configuration配置、构建映射器 mapper 一旦初始化之后就无法改变
+          SqlSessionFactory 通过单例模式保证线程安全
          */
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(Resources.getResourcesAsReader("mybatis-config-datasource.xml"));
         // 创建 SqlSession 对象，用于与数据库进行交互
-        /**
+        /*
          * openSession() 方法的作用是创建一个新的 SqlSession 对象，用于执行 SQL 语句和管理事务。
          * SqlSession 对象是线程不安全的，每个线程应该拥有自己的 SqlSession 对象，因此在使用完毕后需要手动关闭。
          * 可以通过 SqlSession 的 close() 方法来关闭该对象。
+         * sqlSession 每一个线程创建一个自己的sqlSession 保证线程安全
          */
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
@@ -79,7 +80,7 @@ public class ApiTest {
             System.out.println(connection);
             Thread.sleep(1000);
             // 注释掉/不注释掉测试
-            connection.close();
+            //connection.close();
         }
     }
 }
