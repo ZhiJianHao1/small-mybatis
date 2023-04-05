@@ -80,7 +80,7 @@ public class ApiTest {
             System.out.println(connection);
             Thread.sleep(1000);
             // 注释掉/不注释掉测试
-            //connection.close();
+            connection.close();
         }
     }
 }

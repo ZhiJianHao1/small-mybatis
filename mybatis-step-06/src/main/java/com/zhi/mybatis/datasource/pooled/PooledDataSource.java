@@ -23,7 +23,7 @@ public class PooledDataSource implements DataSource {
 
     private final UnpooledDataSource dataSource;
     // 活跃连接数
-    protected int poolMaximumActiveConnections = 1;
+    protected int poolMaximumActiveConnections = 10;
     // 空闲连接数
     protected int poolMaximumIdleConnections = 5;
     // 在被强制返回之前 池中连接被检查的时间
