@@ -17,6 +17,7 @@
         <module>mybatis-step-05</module>
         <module>mybatis-step-06</module>
         <module>mybatis-step-07</module>
+        <module>mybatis-step-08</module>
     </modules>
 
     <properties>
