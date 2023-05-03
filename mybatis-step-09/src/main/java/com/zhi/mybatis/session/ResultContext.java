@@ -1,4 +1,4 @@
-package com.zhi.mybatis.executor.result;
+package com.zhi.mybatis.session;
 
 /**
  * 结果上下文

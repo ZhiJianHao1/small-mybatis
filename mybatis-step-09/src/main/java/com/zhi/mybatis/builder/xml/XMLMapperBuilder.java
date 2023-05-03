@@ -1,6 +1,7 @@
 package com.zhi.mybatis.builder.xml;
 
 import com.zhi.mybatis.builder.BaseBuilder;
+import com.zhi.mybatis.builder.MapperBuilderAssistant;
 import com.zhi.mybatis.io.Resources;
 import com.zhi.mybatis.session.Configuration;
 import org.dom4j.Document;
@@ -21,7 +22,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private String resource;
 
-    private String currentNamespace;
+    private MapperBuilderAssistant builderAssistant;
 
     public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource) throws DocumentException {
         this(new SAXReader().read(inputStream), configuration, resource);
@@ -29,6 +30,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private XMLMapperBuilder(Document document, Configuration configuration, String resource) {
         super(configuration);
+        this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
         this.element = document.getRootElement();
         this.resource = resource;
     }
@@ -42,17 +44,17 @@ public class XMLMapperBuilder extends BaseBuilder {
             // 标记一下，已经加载过了
             configuration.addLoadedResource(resource);
             // 绑定映射器到 namespace
-            configuration.addMapper(Resources.classForName(currentNamespace));
+            configuration.addMapper(Resources.classForName(builderAssistant.getCurrentNamespace()));
         }
     }
 
     private void configurationElement(Element element) {
         // 1.配置 namespace
-        currentNamespace = element.attributeValue("namespace");
-        if (currentNamespace.equals("")) {
+        String namespace = element.attributeValue("namespace");
+        if (namespace.equals("")) {
             throw new RuntimeException("Mapper's namespace cannot be empty");
         }
-
+        builderAssistant.setCurrentNamespace(namespace);
         // 2.配置 select｜insert｜update｜delete
         buildStatementFromContext(element.elements("select"));
     }
@@ -63,7 +65,7 @@ public class XMLMapperBuilder extends BaseBuilder {
      */
     private void buildStatementFromContext(List<Element> list) {
         for (Element element : list) {
-            final XMLStatementBuilder statementBuilder = new XMLStatementBuilder(configuration, element, currentNamespace);
+            final XMLStatementBuilder statementBuilder = new XMLStatementBuilder(configuration, element, builderAssistant);
             statementBuilder.parseStatementNode();
         }
     }

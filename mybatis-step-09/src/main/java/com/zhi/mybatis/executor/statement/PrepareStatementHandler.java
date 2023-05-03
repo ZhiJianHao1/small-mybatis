@@ -4,6 +4,7 @@ import com.zhi.mybatis.executor.Executor;
 import com.zhi.mybatis.mapping.BoundSql;
 import com.zhi.mybatis.mapping.MappedStatement;
 import com.zhi.mybatis.session.ResultHandler;
+import com.zhi.mybatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +17,8 @@ import java.util.List;
  * @author zhijianhao
  */
 public class PrepareStatementHandler extends BaseStatementHandler {
-    public PrepareStatementHandler (Executor executor, MappedStatement mappedStatement, Object parameter, ResultHandler resultHandler, BoundSql boundSql) {
-        super(executor, mappedStatement, parameter, resultHandler, boundSql);
+    public PrepareStatementHandler (Executor executor, MappedStatement mappedStatement, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+        super(executor, mappedStatement, parameter, rowBounds, resultHandler, boundSql);
     }
     @Override
     protected Statement instantiateStatement(Connection connection) throws SQLException {

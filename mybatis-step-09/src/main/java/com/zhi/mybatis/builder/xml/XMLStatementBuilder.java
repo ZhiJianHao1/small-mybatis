@@ -1,6 +1,7 @@
 package com.zhi.mybatis.builder.xml;
 
 import com.zhi.mybatis.builder.BaseBuilder;
+import com.zhi.mybatis.builder.MapperBuilderAssistant;
 import com.zhi.mybatis.mapping.MappedStatement;
 import com.zhi.mybatis.mapping.SqlCommandType;
 import com.zhi.mybatis.mapping.SqlSource;
@@ -18,12 +19,12 @@ public class XMLStatementBuilder extends BaseBuilder {
 
     private Element element;
 
-    private String currentNamespace;
+    private MapperBuilderAssistant builderAssistant;
 
-    public XMLStatementBuilder(Configuration configuration, Element element, String currentNamespace) {
+    public XMLStatementBuilder(Configuration configuration, Element element, MapperBuilderAssistant builderAssistant) {
         super(configuration);
         this.element = element;
-        this.currentNamespace = currentNamespace;
+        this.builderAssistant = builderAssistant;
     }
 
     //解析语句(select|insert|update|delete)
@@ -46,6 +47,8 @@ public class XMLStatementBuilder extends BaseBuilder {
         // 参数类型
         String parameterType = element.attributeValue("parameterType");
         Class<?> parameterTypeClass = resolveAlias(parameterType);
+        // 外部应用 resultMap
+        String resultMap = element.attributeValue("resultMap");
         // 结果类型
         String resultType = element.attributeValue("resultType");
         Class<?> resultTypeClass = resolveAlias(resultType);
@@ -56,12 +59,16 @@ public class XMLStatementBuilder extends BaseBuilder {
         // 获取默认语言驱动器
         Class<?> langClass = configuration.getLanguageRegistry().getDefaultDriverClass();
         LanguageDriver langDriver = configuration.getLanguageRegistry().getDriver(langClass);
-
+        // 解析成SqlSource，DynamicSqlSource/RawSqlSource
         SqlSource sqlSource = langDriver.createSqlSource(configuration, element, parameterTypeClass);
 
-        MappedStatement mappedStatement = new MappedStatement.Builder(configuration, currentNamespace + "." + id, sqlCommandType, sqlSource, resultTypeClass).build();
-
-        // 添加解析 SQL
-        configuration.addMappedStatement(mappedStatement);
+        // 调用助手类
+        builderAssistant.addMappedStatement(id,
+                sqlSource,
+                sqlCommandType,
+                parameterTypeClass,
+                resultMap,
+                resultTypeClass,
+                langDriver);
     }
 }

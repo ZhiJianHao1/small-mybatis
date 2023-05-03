@@ -7,7 +7,7 @@ import com.zhi.mybatis.datasource.unpooled.UnpooledDataSourceFactory;
 import com.zhi.mybatis.executor.Executor;
 import com.zhi.mybatis.executor.SimpleExecutor;
 import com.zhi.mybatis.executor.parameter.ParameterHandler;
-import com.zhi.mybatis.executor.resultset.DefaultResultHandler;
+import com.zhi.mybatis.executor.resultset.DefaultResultSetHandler;
 import com.zhi.mybatis.executor.resultset.ResultSetHandler;
 import com.zhi.mybatis.executor.statement.PrepareStatementHandler;
 import com.zhi.mybatis.executor.statement.StatementHandler;
@@ -133,11 +133,18 @@ public class Configuration {
         return databaseId;
     }
 
-    public ResultSetHandler newResultHandler(Executor executor, MappedStatement mappedStatement, BoundSql boundSql) {
-        return new DefaultResultHandler(executor, mappedStatement, boundSql);
+    /**
+     *  创建结果集处理器
+     * @param executor
+     * @param mappedStatement
+     * @param boundSql
+     * @return
+     */
+    public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds,ResultHandler resultHandler,  BoundSql boundSql) {
+        return new DefaultResultSetHandler(executor, mappedStatement, resultHandler, rowBounds, boundSql);
     }
-    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameter, ResultHandler resultHandler, BoundSql boundSql) {
-        return new PrepareStatementHandler(executor, mappedStatement, parameter, resultHandler, boundSql);
+    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+        return new PrepareStatementHandler(executor, mappedStatement, parameter, rowBounds, resultHandler, boundSql);
     }
 
     public Executor newExecutor(Transaction tx) {
@@ -174,5 +181,9 @@ public class Configuration {
 
     public LanguageDriver getDefaultScriptingLanguageInstance() {
         return languageDriverRegister.getDefaultDriver();
+    }
+
+    public ObjectFactory getObjectFactory() {
+        return objectFactory;
     }
 }
