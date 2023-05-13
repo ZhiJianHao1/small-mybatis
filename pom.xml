@@ -20,6 +20,7 @@
         <module>mybatis-step-08</module>
         <module>mybatis-step-09</module>
         <module>mybatis-step-10</module>
+        <module>mybatis-step-11</module>
     </modules>
 
     <properties>
